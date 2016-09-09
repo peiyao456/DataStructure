@@ -14,7 +14,7 @@ ostream& operator<<(ostream& os,  Stack<T>& s)
 template<typename T>
 void Stack<T>::Display()
 {
-	while (!isEmpty())
+	if (!isEmpty())
 	{
 		for (int i = _size - 1; i >= 0; --i)
 		{
