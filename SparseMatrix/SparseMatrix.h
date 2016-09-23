@@ -10,17 +10,20 @@ struct Triple
 	T _value;
 	size_t _row;
 	size_t _col;
-	Triple(T value,size_t row,size_t col)
+	Triple(T value = 0,size_t row = 0,size_t col = 0)
 		:_value(value)
 		,_row(row)
 		,_col(col)
 	{}
 };
+
 template<typename T>
 class SparseMatrix
 {
 public:
 	typedef Triple<T> Triple;
+	SparseMatrix()
+	{}
 	SparseMatrix(T* a, size_t m, size_t n, const T& invalid)
 		:_rowSize(m)
 		, _colSize(n)
@@ -69,6 +72,72 @@ public:
 			}
 			cout << endl;
 		}
+		cout << endl;
+	}
+	SparseMatrix<T> Transport()
+	{
+		SparseMatrix<T> sm;
+		sm._colSize = _rowSize;
+		sm._rowSize = _colSize;
+		sm._invalid = _invalid;
+		sm._a.reserve(_a.size());
+		
+		for (size_t i = 0; i < _colSize; ++i)
+		{
+			size_t index = 0;
+			while (index < _a.size())
+			{
+				if (_a[index]._col == i)
+				{
+					sm._a.push_back(Triple(_a[index]._value, _a[index]._col, _a[index]._row));
+				}
+				++index;
+			}
+		}
+
+		return sm;
+	}
+	SparseMatrix<T> FastTransport()
+	{
+		SparseMatrix<T> sm;
+		sm._colSize = _rowSize;
+		sm._rowSize = _colSize;
+		sm._invalid = _invalid;
+		sm._a.resize(_a.size());
+
+		//nums数组的初始化
+		int* nums = new int[_colSize];
+		memset(nums,0,sizeof(int)*_colSize);
+		for (size_t index = 0; index < _a.size(); ++index)
+		{
+			int col = _a[index]._col;
+			++nums[col];
+		}
+
+		//start数组初始化
+		int* start = new int[_colSize];
+		start[0] = 0;
+
+		for (size_t i = 1; i < _colSize; ++i)
+		{
+			start[i] = start[i - 1] + nums[i - 1];
+		}
+
+		//转置
+		for (size_t i = 0; i < _a.size(); ++i)
+		{
+			int col = _a[i]._col;
+			int begin = start[col];
+
+			sm._a[begin]._row = _a[i]._col;
+			sm._a[begin]._col = _a[i]._row;
+			sm._a[begin]._value = _a[i]._value;
+			++ start[col];
+		}
+
+		delete[] nums;
+		delete[] start;
+		return sm;
 	}
 private:
 	vector<Triple> _a;//存放结构体的容器
@@ -87,4 +156,8 @@ void TestSparseMatrix()
 	};
 	SparseMatrix<int> sp((int*)a,5,6,0);
 	sp.Display();
+	SparseMatrix<int> tsm = sp.Transport();
+	tsm.Display();
+	SparseMatrix<int> ftsm = sp.FastTransport();
+	ftsm.Display();
 }
