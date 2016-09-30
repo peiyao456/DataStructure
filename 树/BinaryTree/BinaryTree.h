@@ -113,6 +113,67 @@ public:
 		}
 		cout << endl;
 	}
+	void PostOrderTraverseNonR()
+	{
+		if (NULL == _root)
+			return;
+		Node* prev = NULL;
+		Node* cur = _root;
+		stack<Node*> s;
+		while (cur || !s.empty())
+		{
+			while (cur)
+			{
+				s.push(cur);
+				cur = cur->_left;
+			}
+			Node* top = s.top();
+			if (top->_right == NULL || top->_right == prev)
+			{
+				cout << top->_data << " ";
+				prev = top;
+				s.pop();
+			}
+			else
+			{
+				cur = top->_right;
+			}
+		}
+		cout << endl;
+	}
+	//void PostOrderTraverseNonR()
+	//{
+	//	Node* cur = _root;
+	//	if (NULL == cur)
+	//		return;
+	//	
+	//	stack<Node*> s;
+	//	size_t size = Size();
+	//	size_t tag[15] = { 0 };
+	//	Node* tmp = NULL;
+	//	while (cur || !s.empty())
+	//	{
+	//		while (cur)
+	//		{
+	//			s.push(cur);
+	//			cur = cur->_left;
+	//		}
+
+	//		if (tag[s.size()-1] == 1)//表示是从右子树返回的
+	//		{
+	//			tmp = s.top();
+	//			cout << tmp->_data << " ";
+	//			s.pop();
+	//		}
+	//		else//表示是从左子树返回的
+	//		{
+	//			tmp = s.top();
+	//			cur = tmp->_right;
+	//			tag[s.size() - 1] = 1;
+	//		}
+	//	}
+	//	cout << endl;
+	//}
 	size_t FindKLevel(size_t n)//统计第n层元素的个数
 	{
 		return _FindKLevel(_root,n);
@@ -203,11 +264,13 @@ protected:
 	}
 	size_t _Size(Node* root)
 	{
+		
 		if (root == NULL)
 			return 0;
 
 		return _Size(root->_left) + _Size(root->_right) + 1;
 	}
+	
 	size_t _Depth(Node* root)
 	{
 		if (root == NULL)
@@ -217,7 +280,7 @@ protected:
 		size_t right = _Depth(root->_right);
 		return left > right ? left + 1 : right + 1;
 	}
-	Node* _Find(Node* root,const T& x)
+	Node* _Find(Node* root, const T& x)
 	{
 		Node* cur = root;
 		if (cur == NULL)

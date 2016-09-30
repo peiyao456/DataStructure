@@ -5,7 +5,7 @@ void TestBinaryTree1()
 	int array2[15] = { 1,2,'#',3,'#','#',4,5,'#',6,'#',7,'#','#',8 };
 	BinaryTree<int> b1(array1, 10, '#');
 	BinaryTree<int> b2(array2, 15, '#');
-	cout << "µÝ¹éÏÈÐò£º";
+	std::cout << "µÝ¹éÏÈÐò£º";
 	b1.PreOrderTraverse();
 	cout << b1.Size() << endl;
 	cout << "µÝ¹éÖÐÐò£º";
@@ -36,11 +36,16 @@ void TestBinaryTree2()
 	b1.PreOrderTraverseNonR();
 	cout << "·ÇµÝ¹éÖÐÐò£º";
 	b1.InOrderTraverseNonR();
-
+	cout << "·ÇµÝ¹éºóÐò£º";
+	b1.PostOrderTraverseNonR();
+	cout << endl;
+	b1.PostOrderTraverseNonR();
 	cout << "·ÇµÝ¹éÏÈÐò£º";
 	b2.PreOrderTraverseNonR();
 	cout << "·ÇµÝ¹éÖÐÐò£º";
 	b2.InOrderTraverseNonR();
+	cout << "·ÇµÝ¹éºóÐò£º";
+	b2.PostOrderTraverseNonR();
 
 	cout << b1.FindKLevel(3)<<endl;
 	cout << b1.FindKLevel(2) << endl;
