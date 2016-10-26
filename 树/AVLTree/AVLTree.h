@@ -143,6 +143,156 @@ public:
 	{
 		return _Height(_root);
 	}
+	bool Remove(const K& key)
+	{
+		if (_root == NULL)
+			return false;
+		Node* cur = _root;
+		Node* parent = NULL;
+		Node* del = NULL;
+		while (cur)
+		{
+			if (cur->_key < key)
+			{
+				parent = cur;
+				cur = cur->_right;
+			}
+			else if (cur->_key > key)
+			{
+				parent = cur;
+				cur = cur->_left;
+			}
+			else//找到所要删除的元素
+			{
+				if (cur->_left == NULL && cur->_right == NULL)//叶子结点
+				{
+					if (parent && parent->_left == cur)
+					{
+						parent->_left = NULL;
+						parent->_bf++;
+						del = cur;
+					}
+					else if (parent && parent->_right == cur)
+					{
+						parent->_right = NULL;
+						parent->_bf--;
+						del = cur;
+					}
+					else
+					{
+						del = _root;
+						_root->_parent = NULL;
+					}
+				}
+				else if (cur->_left == NULL || cur->_right == NULL)
+				{
+					if (cur->_right != NULL)
+					{
+						if (parent == NULL)
+						{
+							_root = cur->_right;
+							_root->_parent = NULL;
+						}
+						if (parent->_right == cur)//只有右孩子
+						{
+							parent->_right = cur->_right;
+							parent->_bf--;
+						}
+						
+						else if (parent->_left == cur)
+						{
+							parent->_left = cur->_right;
+							++parent->_bf;
+						}
+					}
+					
+					else//只有左孩子
+					{
+						if (parent == NULL)
+						{
+							_root = cur->_left;
+							_root->_parent = NULL;
+						}
+						else if (parent->_left == cur)
+						{
+							parent->_left = cur->_left;
+							parent->_bf++;
+						}
+						else
+						{
+							parent->_right = cur->_left;
+							parent->_bf--;
+						}
+					}
+					del = cur;
+				}
+				else//有左右孩子
+				{
+					Node* minRight = cur->_right;
+					//找右子树的最左结点
+					while (minRight->_left)
+					{
+						parent = minRight;
+						minRight = minRight->_left;
+					}
+					cur->_key = minRight->_key;
+					if (parent->_left == minRight)
+					{
+						parent->_left = minRight->_right;
+						parent->_bf++;
+					}
+					else if (parent->_right == minRight)
+					{
+						parent->_right = minRight->_right;
+						parent->_bf--;
+					}
+					del = minRight;
+				}
+				
+				while (parent)
+				{
+					cur = del;
+					if (cur == parent->_left)
+						++parent->_bf;
+					else if (cur == parent->_right)
+						--parent->_bf;
+
+					if (parent->_bf == 0)
+					{
+						cur = parent;
+						parent = parent->_parent;
+					}
+					else if (parent->_bf == 1 || parent->_bf == -1)
+					{
+						//高度没有改变，直接跳出
+						break;
+					}
+					else
+					{
+						if (parent->_bf == 2)//树已经不平衡，需要调整
+						{
+							if (cur->_bf == 1)
+								_RotateL(parent);
+							else             //if (cur->_bf == -1)
+								_RotateRL(parent);
+						}
+						//	if (parent->_bf == -2)
+						else
+						{
+							if (cur->_bf == -1)
+								_RotateR(parent);
+							else                 //if (cur->_bf == 1)
+								_RotateLR(parent);
+						}
+					}
+				}
+				delete del;
+				del = NULL;
+				return true;
+			}
+		}
+		return false;
+	}
 protected:
 	//优化版本
 	bool _IsBalanceOP(Node* root,int& height)
@@ -156,7 +306,7 @@ protected:
 		if (!_IsBalanceOP(root->_left, leftHeight))
 			return false;
 		int rightHeight = 0;
-		if (!_IsBalanceOP(root->_right, leftHeight))
+		if (!_IsBalanceOP(root->_right, rightHeight))
 			return false;
 		height = 1 + rightHeight > leftHeight ? rightHeight : leftHeight;
 		return true;
@@ -323,6 +473,18 @@ void TestAVL()
 	tree1.InOrderNonR();
 	cout <<"IsBalance?"<< tree1.IsBalance() << endl;
 	cout << "IsBalance?" << tree1.IsBalanceOP() << endl;
+	tree1.Remove(16);
+	tree1.Remove(3);
+	tree1.Remove(7);
+	tree1.Remove(11);
+	tree1.InOrderNonR();//9 26 18 14 15
+	tree1.Remove(9);
+	tree1.Remove(26);
+	tree1.Remove(18);
+	tree1.Remove(15);
+	tree1.InOrderNonR();//9 26 18 14 15
+	cout << "IsBalance?" << tree1.IsBalance() << endl;
+
 	int array2[] = { 4, 2, 6, 1, 3, 5, 15, 7, 16, 14 };
 
 	AVLTree<int, int> tree2;
@@ -333,4 +495,6 @@ void TestAVL()
 	tree2.InOrderNonR();
 	cout << "IsBalance?" << tree2.IsBalance() << endl;
 	cout << "IsBalance?" << tree2.IsBalanceOP() << endl;
+	tree2.Remove(5);
+	tree2.InOrderNonR();
 }
