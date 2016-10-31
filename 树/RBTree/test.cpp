@@ -1,4 +1,5 @@
 #include"RBTree.hpp"
+
 void testRBTree()
 {
 	int array1[] = { 16, 3, 7, 11, 9, 26, 18, 14, 15 };
