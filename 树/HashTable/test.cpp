@@ -1,7 +1,8 @@
 #include"HashTable.hpp"
 int main()
 {
-	TestHashTable();
+	TestHashTableOpen();
+	TestHashTableLink();
 	system("pause");
 	return 0;
 }
