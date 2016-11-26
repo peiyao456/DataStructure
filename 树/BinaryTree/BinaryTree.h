@@ -262,6 +262,7 @@ protected:
 		size_t  right = _FindKLevel(root->_right,n-1);
 		return left + right;
 	}
+	
 	size_t _Size(Node* root)
 	{
 		
