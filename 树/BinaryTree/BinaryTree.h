@@ -271,7 +271,6 @@ protected:
 
 		return _Size(root->_left) + _Size(root->_right) + 1;
 	}
-	
 	size_t _Depth(Node* root)
 	{
 		if (root == NULL)
