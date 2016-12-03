@@ -1,4 +1,5 @@
 //判断给定序列是否是BST的后序序列
+
 template<typename T>
 class PostOrder
 {
